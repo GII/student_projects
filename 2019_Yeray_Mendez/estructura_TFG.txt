@@ -1,0 +1,90 @@
+ESTRUCTURA TFG YERAY
+
+PORTADA
+
+Sigue las normas de estilo de la biblioteca
+
+*Lo haces al final
+
+DEDICATORIA Y AGRADECIMIENTOS
+
+Cada una en una página diferente
+
+*Lo haces al final
+
+RESUMEN 
+
+500 palabras máximo
+
+*Lo haces al final
+
+PALABRAS CLAVE
+
+*Lo haces al final
+
+HARDWARE Y SOFTWARE UTILIZADO
+
+*Los haces al final
+
+ÍNDICE
+
+*Lo haces al final
+
+1-INTRODUCCIÓN
+
+1.1- Motivación: (2-3 páginas)
+
+	- Breve introducción al DREAM, al problema del aprendizaje de Value Functions y a cómo lo resolvíamos hasta ahora
+	
+	*Te paso info el fin de semana y lo haces cuanto antes
+
+1.2- Objetivos: 
+
+	- Lo sacas del anteproyecto, y le añades unos sub-objetivos que lleven al objetivo global
+
+	*Lo haces al final
+
+1.3- Estructura de la memoria
+
+	*Lo haces al final
+
+2-FUNDAMENTOS TEÓRICOS (8-10 páginas)
+
+2.1- MOTIVEN
+2.2- Aprendizaje on-line (algoritmos estocásticos)
+
+3-ANTECEDENTES (3-4 páginas)
+
+Deberías hablar sobre motivaciones, varios objetivos, etc
+
+*Te paso info el fin de semana y lo haces cuando puedas
+
+4- FUNDAMENTOS TECNOLÓGICOS
+
+4.1- ROS
+4.2- TENSOR FLOW
+4.3- GAZEBO
+
+5- METODOLOGÍA (1-2 páginas)
+
+*Lo haces cuando puedas
+
+6-DESARROLLO
+
+6.1- ARQUITECTURA GLOBAL DE MOTIVEN INCLUYENDO APRENDIZAJE DE VF Y GAZEBO (*Lo haces ya)
+6.2- APRENDIZAJE DE VF (*pendiente de acabar la parte de zonas de certeza)
+	- Integración de Tensor Flow en MotivEn
+	- Implementación de zonas de certeza
+6.3- GAZEBO (*lo haces ya)
+	- Integración de Gazebo en MotivEn
+
+7-PRUEBAS DE FUNCIONAMIENTO
+
+7.1- CON DATOS TEÓRICOS (*lo puedes hacer ya)
+7.2- CON GAZEBO (*pendiente)
+
+8-CONCLUSIONES
+
+* Lo haces al final
+
+
