@@ -1,0 +1,4 @@
+<launch>
+   <node name="depth_features" pkg="ur5e_perception" type="depth_features" output="screen" />
+   <node name="color_features" pkg="ur5e_perception" type="color_features" output="screen" />
+</launch>

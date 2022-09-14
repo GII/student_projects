@@ -1,0 +1,24 @@
+#!/usr/bin/env python
+import rospy
+from ur5e_perception.feature_extraction import FeatureExtractor
+
+
+
+
+
+try:
+   rospy.init_node("feature_extractor")
+   extractor = FeatureExtractor()
+   extractor.publish_depth()
+   rospy.spin()
+
+
+
+
+        
+except rospy.ROSInterruptException:
+    rospy.logerr("Something went wrong or you pressed CTRL +C ...")
+
+
+
+

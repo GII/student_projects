@@ -1,0 +1,12 @@
+<launch>
+
+       <!-- This version uses the openai_ros environments -->
+    <rosparam command="load" file="$(find ddpg)/config/shadow_tc_openai_qlearn_params.yaml" />
+    <node name="ddpg" pkg="ddpg" type="ddpg" output="screen" />
+
+    <include file="$(find ur5e_2FG7_gazebo)/launch/ur5e_2FG7_bringup_moveit.launch">
+      <arg name="is_rviz_on" value="false"/>
+    </include>  
+    
+
+</launch>

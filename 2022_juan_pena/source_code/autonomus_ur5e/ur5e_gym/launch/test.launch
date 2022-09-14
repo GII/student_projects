@@ -1,0 +1,16 @@
+<launch>
+
+       <!-- This version uses the openai_ros environments -->
+    <env name="ROSCONSOLE_CONFIG_FILE"
+       value="$(find ur5e_gym)/config/console.config"/>
+
+
+    <node name="test" pkg="ur5e_gym" type="test" output="screen" />
+
+    <include file="$(find ur5e_2FG7_gazebo)/launch/ur5e_2FG7_bringup_moveit.launch">
+      <arg name="is_rviz_on" value="false"/>
+      <arg name="planner" value="ompl"/>
+    </include>  
+    
+
+</launch>

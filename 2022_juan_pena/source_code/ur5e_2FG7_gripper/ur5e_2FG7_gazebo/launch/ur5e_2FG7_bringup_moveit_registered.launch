@@ -1,0 +1,89 @@
+<?xml version="1.0" ?>
+
+<launch> 
+  <arg name="is_rviz_on" default = "true"/>
+  <arg name="planner" default = "ompl"/>
+ <!--  ADDED TO TEST THE OBJECT RECON-->
+  <!-- Which image resolution: sd, qhd, hd -->
+	<!-- <arg name="resolution"    default="qhd" />
+	<arg name="object_prefix" default="object"/>
+	<arg name="objects_path"  default=""/>
+	<arg name="gui"           default="true"/>
+	<arg name="settings_path" default="~/.ros/find_object_2d.ini"/> -->
+  <!-- ADDED TO TEST THE OBJECT RECON-->
+  
+  <!-- PARAMS -->
+  <param name="is_rviz_on" value="$(arg is_rviz_on)"/>
+  <param name="planner" value="$(arg planner)"/>
+
+
+
+  <!-- Launch Gazebo  --> 
+  <include file="$(find ur5e_2FG7_gazebo)/launch/gazebo.launch" />    
+
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find ur5e_2FG7_gazebo)/config/ur5e_2FG7_gazebo_trajectory_control.yaml" command="load"/>
+ 
+
+ 	<node name="ur5e_2FG7_joint_state_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"
+     args="joint_state_controller arm_controller gripper_controller"/>
+  
+
+  
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+    <!-- <remap from="/joint_states" to="/ur5e_2FG7/joint_states" /> -->
+    <!-- <param name="publish_frequency" value="60" /> -->
+    <param name="ignore_timestamp" value="true" />
+  </node>
+
+  <!-- it gets published by gazebo : -->
+  <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"> 
+    <param name="rate" value="10" />
+  </node> -->
+  
+ 
+	
+	<!-- <remap from="joint_states" to="/ur5e_2FG7/joint_states" /> -->
+
+  <include file="$(find ur5e_2FG7_moveit_config)/launch/planning_context.launch">
+    <arg name="load_robot_description" value="false" />  
+  </include>  
+
+
+  <include file="$(find ur5e_2FG7_moveit_config)/launch/move_group.launch">
+    <arg name="publish_monitored_planning_scene" value="true" />
+    <arg name="moveit_controller_manager" value="ur5e_2FG7" />
+    <arg name="pipeline" value="$(arg planner)" />
+  </include>
+  <group if="$(arg is_rviz_on)">
+    <include file="$(find ur5e_2FG7_moveit_config)/launch/moveit_rviz.launch">
+      <arg name="rviz_config" value="$(find ur5e_2FG7_moveit_config)/launch/moveit.rviz"/>
+    </include>
+  </group>
+
+
+
+<!-- ADDED TO TEST THE OBJECT RECON-->	
+ 
+
+  <node pkg="nodelet" type="nodelet" name="nodelet_manager" args="manager" />
+  <node pkg="nodelet" type="nodelet" name="nodelet1"
+        args="load depth_image_proc/register nodelet_manager">
+
+    <remap from="rgb/camera_info" to="/camera/color/camera_info"/>
+    <remap from="depth/camera_info" to="/camera/depth/camera_info"/>
+    <remap from="depth/image_rect" to="/camera/depth/image_rect_raw"/>
+
+    <remap from="depth_registered/camera_info" to="aligned_depth_to_color/camera_info"/>
+    <remap from="depth_registered/image_rect" to="aligned_depth_to_color/image_raw"/>
+  </node>
+
+  <node pkg="nodelet" type="nodelet" name="nodelet2"
+        args="load depth_image_proc/point_cloud_xyz nodelet_manager">
+    <remap from="camera_info" to="aligned_depth_to_color/camera_info"/>
+    <remap from="image_rect" to="aligned_depth_to_color/image_raw"/>
+    <remap from="points" to="/camera/depth/points"/>
+  </node>
+<!-- ADDED TO TEST THE OBJECT RECON--> 
+</launch> 

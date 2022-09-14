@@ -1,0 +1,561 @@
+#!/usr/bin/env python
+
+from inspect import TPFLAGS_IS_ABSTRACT
+from multiprocessing.connection import wait
+from turtle import position
+from cv2 import threshold
+from rosdep2 import RosdepDatabaseEntry
+import rospy
+from ur5e_gym.ur5e_env import Ur5eEnv
+from ur5e_gym.robot_movement import SmartGrasper
+from tf.transformations import quaternion_from_euler
+import geometry_msgs.msg
+import tf2_ros
+import tf
+import copy
+from cv_bridge import CvBridge 
+from geometry_msgs.msg import Pose, Vector3
+from moveit_msgs.msg import PlanningScene
+from moveit_commander import (
+    RobotCommander,
+    PlanningSceneInterface,
+    roscpp_initialize,
+    roscpp_shutdown,
+)
+
+import random
+from math import sqrt, pi
+from geometry_msgs.msg import PoseStamped
+import numpy as np
+from sensor_msgs.msg import Image
+from sensor_msgs.msg import LaserScan
+from sensor_msgs.msg import PointCloud2,JointState
+from moveit_msgs.msg import PositionIKRequest,RobotState
+
+def init_node():
+    try:
+        
+        rospy.init_node("pub_node")
+        test = SmartGrasper()
+        x = random.uniform(0.6, 0.965)
+        y = random.uniform(-1*sqrt(abs(0.75**2 - x**2 )), sqrt(abs(0.75**2 - x**2 )))
+        test.spawn_object(new_model_name="cylinder",x=x,y=y,z=1)
+        test.spawn_object(new_model_name="marker_default",x=0.99,y=0.0,z=0.914)
+        goal_pose =Pose()
+        goal_pose.position.x = 0.45
+        goal_pose.position.y = 0.3
+        goal_pose.position.z = 0.25
+        goal_pose.orientation.x = 0.6532815
+        goal_pose.orientation.y = 0.6532815
+        goal_pose.orientation.z = 0.2705981
+        goal_pose.orientation.w = 0.2705981
+
+        test.arm_commander.set_pose_target([0.6,-0.37,0.05,0.6532815,0.6532815,0.2705981,0.2705981])        
+        test.arm_commander.go(wait=True)
+        
+        print(test.get_tip_pose())
+     
+        # command_arm = {"wrist_1_joint":6.28}
+        # # command_gripper = {"left_finger_joint":0.008}
+        # test.arm_commander.set_joint_value_target(command_arm)
+        # test.arm_commander.go(wait=True)
+        # flag = test.move_tip_absolute(goal_pose)
+        # print(test.get_tip_pose())
+     
+
+        # print(goal_pose)
+        # print("starting")      
+        
+
+        # test.hard_reset_world()
+        # flag = test.move_tip_absolute(goal_pose)
+
+
+        # group_name = "arm"
+        # robot_state = test.robot_commander.get_current_state()
+        # ik_link_name = "tcp"
+        # pose = PoseStamped()
+        # pose.pose.position.x
+        # pose.pose.position.x
+        # pose.pose.position.x
+
+        
+        # pose.pose.orientation
+        # test.arm
+
+
+
+        # tf_buffer = tf2_ros.Buffer()
+        # listener = tf2_ros.TransformListener(tf_buffer)
+        # while not rospy.is_shutdown():
+        #     is_tf_ready = tf_buffer.can_transform("world","camera_color_optical_frame",rospy.Time(),timeout=rospy.Duration(5.0))
+        #     if is_tf_ready :
+        #         print("no c que pasa")
+        
+        # # while not rospy.is_shutdown():
+        # #     x = random.uniform(0.8, 0.9)
+        # #     y = random.uniform(-1*sqrt(abs(0.75**2 - x**2 )), sqrt(abs(0.75**2 - x**2 )))
+        # #     # is_ok_object = test.move_model(x=x,y=y,z=1)
+        # #     rospy.sleep(0.2)
+        # #     print(x)
+        # #     print(y)
+        # #     is_ok_object = test.move_model(model_name="marker_default",x=x,y=y,z=0.914)
+        # #     print(is_ok_object)
+        # #     rospy.sleep(1.0)
+            
+
+        # # is_ok_object = self.movement_system.move_model(x=x,y=y,z=1)
+        # # rospy.sleep(0.2)
+        # # is_ok_object = self.movement_system.move_model(model_name="marker_default",x=x+0.15,y=y,z=0.914)
+        # def reward_reach():
+        #     tip_pose = Pose()
+        #     is_tf_ready = tf_buffer.can_transform("world","tcp",rospy.Time(),timeout=rospy.Duration(5.0))
+        #     if  is_tf_ready:
+        #         trans = tf_buffer.lookup_transform("world","tcp", rospy.Time())
+        #         tip_pose.position.x = trans.transform.translation.x
+        #         tip_pose.position.y = trans.transform.translation.y
+        #         tip_pose.position.z = trans.transform.translation.z 
+        #     else :
+        #         try:
+        #             tip_pose =  test.get_tip_pose()
+        #         except:
+        #             rospy.logerr("an error ocurred getting the tip pose")
+        
+
+
+
+        #     object_pose = test.get_object_pose(object_name="cylinder")
+        #     #a = tip
+        #     a = np.array((tip_pose.position.x, tip_pose.position.y, tip_pose.position.z))
+        #     #b = objeto
+        #     b = np.array((object_pose.position.x, object_pose.position.y, object_pose.position.z))
+    
+        #     distance = np.linalg.norm(a - b)
+        #     # reward = 1/distance
+        #     reward = distance
+        #     threshold = 0.05 
+        #     is_inside =  distance<threshold
+        #     return is_inside,reward 
+        # def reward_pick():
+        #     tip_pose = Pose()
+        #     left_finger_pose = Pose()
+        #     right_finger_pose = Pose()
+        #     is_tf_ready = tf_buffer.can_transform("world","tcp",rospy.Time(),timeout=rospy.Duration(5.0))
+        #     if  is_tf_ready:
+                
+        #         trans = tf_buffer.lookup_transform("world","tcp", rospy.Time())
+        #         tip_pose.position.x = trans.transform.translation.x
+        #         tip_pose.position.y = trans.transform.translation.y
+        #         tip_pose.position.z = trans.transform.translation.z
+
+        #         trans_rf = tf_buffer.lookup_transform("world","right_finger_v1_1", rospy.Time())
+        #         right_finger_pose.position.x = trans_rf.transform.translation.x
+        #         right_finger_pose.position.y = trans_rf.transform.translation.y
+        #         right_finger_pose.position.z = trans_rf.transform.translation.z
+
+        #         trans_lf = tf_buffer.lookup_transform("world","left_finger_v1_1", rospy.Time())
+        #         left_finger_pose.position.x = trans_lf.transform.translation.x
+        #         left_finger_pose.position.y = trans_lf.transform.translation.y
+        #         left_finger_pose.position.z = trans_lf.transform.translation.z
+
+
+
+        #     else :
+        #         try:
+        #             tip_pose =  test.get_tip_pose()
+        #         except:
+        #             rospy.logerr("an error ocurred getting the tip pose")
+        
+
+
+
+        #     object_pose = test.get_object_pose(object_name="cylinder")
+        #     target_pose =  Pose()
+        #     target_pose.position.x = object_pose.position.x
+        #     target_pose.position.y = object_pose.position.y
+        #     target_pose.position.z = 1.3
+        #     #a = tip
+        #     a = np.array((tip_pose.position.x, tip_pose.position.y, tip_pose.position.z))
+        #     #b = objeto
+        #     b = np.array((object_pose.position.x, object_pose.position.y, object_pose.position.z))    
+        #     grip_distance = np.linalg.norm(a - b)
+
+        #     a = np.array((left_finger_pose.position.x, left_finger_pose.position.y, left_finger_pose.position.z))
+        #     left_finger_distance = np.linalg.norm(a - b)
+
+        #     a = np.array((right_finger_pose.position.x, right_finger_pose.position.y, right_finger_pose.position.z))
+        #     right_finger_distance = np.linalg.norm(a - b)
+        #     a = np.array((target_pose.position.x, target_pose.position.y, target_pose.position.z))
+        #     target_distance = np.linalg.norm(a - b)
+        #     distance_reward = 1 / grip_distance
+        #     left_finger_reward =  1 / left_finger_distance
+        #     right_finger_reward = 1 / right_finger_distance
+        #     target_reward = 1 / target_distance
+
+        #     # if test.check_fingers_collision:
+        #     #     pick_reward =  target_reward
+
+        #     pick_reward = distance_reward + left_finger_reward + right_finger_reward + target_reward            
+        #     return pick_reward
+
+
+        # is_tf_ready = tf_buffer.can_transform("base_link","ee_link",rospy.Time(),timeout=rospy.Duration(5.0))
+        # tip_pose=Pose()
+        # if  is_tf_ready:
+        #     trans = tf_buffer.lookup_transform("base_link","ee_link", rospy.Time())
+        #     tip_pose.position = trans.transform.translation
+        #     tip_pose.orientation = trans.transform.rotation
+        # goal_pose = Pose()
+        # q = quaternion_from_euler(1.5707963,2*pi/360,0)
+        # goal_pose.orientation.x = q[0]
+        # goal_pose.orientation.y = q[1]
+        # goal_pose.orientation.z = q[2]
+        # goal_pose.orientation.w = q[3]
+        # goal_pose.position.x = tip_pose.position.x +0.1
+        # goal_pose.position.y = tip_pose.position.y -0.1
+        # goal_pose.position.z = tip_pose.position.z -0.1
+        
+
+        # # goal_pose.position.x = 0.45
+        # # goal_pose.position.y = 0.0
+        # # goal_pose.position.z = 0.25
+        
+
+        # print(tip_pose) 
+        # print(goal_pose)
+        # print("starting")      
+        # flag = test.move_tip_absolute(goal_pose)
+        # print("finished")
+        
+        # joints_info  = rospy.wait_for_message("joint_states",JointState,timeout=5)
+        # positions = list(joints_info.position)
+        # print(joints_info)
+        
+        # action = 0.0174533
+        # init_pos =  {'shoulder_pan_joint':-1.57 + action, 'shoulder_lift_joint':0.0,'elbow_joint':-1.57,
+        # 		 'wrist_1_joint':0.0, 'wrist_2_joint':0.0,'wrist_3_joint':0.0}
+        # print("sending command")
+        
+        # flag=test.send_command(init_pos, duration=0.3)
+        # print(flag)
+        # joints_info  = rospy.wait_for_message("joint_states",JointState,timeout=5)
+        # positions = list(joints_info.position)
+        # print(positions)
+        # init_pos = {'shoulder_pan_joint':positions[0]-action, 'shoulder_lift_joint':-1.5,'elbow_joint':-1.57,
+        # 		 'wrist_1_joint':0.0, 'wrist_2_joint':0.0,'wrist_3_joint':0.0}
+        # print("sending command")
+        # test.send_command(init_pos, duration=0.3)
+        # joints_info  = rospy.wait_for_message("joint_states",JointState,timeout=5)
+        # positions = list(joints_info.position)
+        # print(positions)
+        
+        
+        # is_tf_ready = tf_buffer.can_transform("world","base_link",rospy.Time(),timeout=rospy.Duration(5.0))
+        # tip_pose=Pose()
+        # if  is_tf_ready:
+        #     trans = tf_buffer.lookup_transform("world","base_link", rospy.Time())
+        #     tip_pose.position.x = trans.transform.translation.x
+        #     tip_pose.position.y = trans.transform.translation.y
+        #     tip_pose.position.z = trans.transform.translation.z
+        # print(tip_pose)
+        # print("starting")
+        # pose_goal = Pose()
+        # pose_goal.orientation.x = 0.0
+        # pose_goal.orientation.z = 0.00000
+        # pose_goal.orientation.y = 0.0
+        # pose_goal.orientation.w = 1.0
+        # pose_goal.position.x = 0.6
+        # pose_goal.position.y = 0.0
+        # pose_goal.position.z = 0.1
+  
+        # flag = test.move_tip_absolute(pose_goal)
+        # pose_goal.orientation.x = 0.0
+        # pose_goal.orientation.z = 0.00000
+        # pose_goal.orientation.y = 0.0
+        # pose_goal.orientation.w = 1.0
+        # pose_goal.position.x = 0.6005
+        # pose_goal.position.y = 0.0
+        # pose_goal.position.z = 0.1
+
+        # flag = test.move_tip_absolute(pose_goal)
+
+
+
+ 
+        # test.arm_commander.set_pose_reference_frame("world")
+        # test.arm_commander.set_pose_targets([pose_goal])        
+        # plan = test.arm_commander.go(wait=True)
+        # test.arm_commander.set_pose_reference_frame("base_link")
+        # waypoints = []
+        # wpose = Pose()
+        # tf_buffer.can_transform("base_link","ee_link",rospy.Time(),timeout=rospy.Duration(5.0))
+        # trans = tf_buffer.lookup_transform("base_link","ee_link", rospy.Time())
+        # wpose.position.x = trans.transform.translation.x
+        # wpose.position.y = trans.transform.translation.y
+        # wpose.position.z = trans.transform.translation.z
+        # wpose.orientation.x = trans.transform.rotation.x
+        # wpose.orientation.y =  trans.transform.rotation.y
+        # wpose.orientation.z = trans.transform.rotation.z
+        # wpose.orientation.w =  trans.transform.rotation.w
+
+        # parts = 10
+        # pose_goal = Pose()
+        # pose_goal.orientation.x = wpose.orientation.x
+        # pose_goal.orientation.z = wpose.orientation.y
+        # pose_goal.orientation.y = wpose.orientation.z
+        # pose_goal.orientation.w = wpose.orientation.w
+        # pose_goal.position.x = 0.99
+        # pose_goal.position.y = 0.000000
+        # pose_goal.position.z = 0.22
+
+        # x_delta = (pose_goal.position.x  - wpose.position.x) / parts
+        # # y_delta =   (pose_goal.position.y  - wpose.position.y)/10.0
+        # # z_delta =   (pose_goal.position.z  - wpose.position.z) /10.0
+
+
+        # # print("doing the for")
+        # for i in range(parts):
+        #     wpose.position.x += x_delta
+        #     # wpose.position.y -= y_delta
+        #     # wpose.position.z -= z_delta
+        #     print("one loop")
+        #     waypoints.append(copy.deepcopy(wpose))
+        # # # for i in range(parts):
+        # # #     # wpose.position.x += x_delta
+        # # #     # wpose.position.y += y_delta
+        # # #     wpose.position.z -= z_delta
+        # # #     print("one loop")
+        # # #     waypoints.append(copy.deepcopy(wpose))
+        # # # for i in range(parts):
+           
+        # # #     wpose.position.y += y_delta
+            
+        # # #     print("one loop")
+        # # #     waypoints.append(copy.deepcopy(wpose))
+
+        # print("waypoints")
+        # print(waypoints)
+        # (plan, fraction) = test.arm_commander.compute_cartesian_path(waypoints,0.05,0.0)
+        # print("executing")
+        # hi=test.arm_commander.execute(plan, wait=True)
+        # if hi:
+        #     print("so far so good")
+        # else:
+        #     print("coudlent move")
+
+        
+        # command = {"left_finger_joint":0.019}
+        # position = [0.5,0.2,0.25]
+        # test.arm_commander.set_position_target(position)
+        # test.arm_commander.go(wait=True) 
+        # test.gripper_commander.set_joint_value_target("left_finger_joint",0.0189)
+        # test.gripper_commander.go(wait=True)
+
+        # test.gripper_commander.set_joint_value_target("left_finger_joint",0.0)
+        # test.gripper_commander.go(wait=True)
+        # test.send_command(command)
+        # rospy.sleep(0.5)
+        # command = {"left_finger_joint":0.0}
+        # test.send_command(command)
+        # reward = reward_pick()
+        # print(reward)
+
+        # pose_goal = Pose()
+        # pose_goal.orientation.x = 0.00000
+        # pose_goal.orientation.z = 0.00000
+        # pose_goal.orientation.y = 0.7071068
+        # pose_goal.orientation.w = 0.7071068
+        # pose_goal.position.x = 0.56
+        # pose_goal.position.y = 0.000000
+        # pose_goal.position.z = 0.22
+        # flag = test.move_tip_absolute(pose_goal)
+        
+        # reward = reward_pick()
+        # print(reward)
+        # test.close_gripper()
+
+        # reward = reward_pick()
+
+        # print(reward)
+        # pose_goal.position.z = 0.22 + 0.2
+        # flag = test.move_tip_absolute(pose_goal)
+        # reward = reward_pick()
+        # print("printing last")
+        # print(reward)
+
+
+        # while not rospy.is_shutdown():
+        #     reward = reward_reach()
+        #     print(reward)
+        #     rospy.sleep(0.5)
+
+
+
+
+        # test.spawn_object(new_model_name="cylinder",x=0.8,y=0.0,z=1)
+        # init_pos = {'shoulder_pan_joint':2.0, 'shoulder_lift_joint':-1.5,'elbow_joint':-1.57,
+        # 		 'wrist_1_joint':0.0, 'wrist_2_joint':0.0,'wrist_3_joint':0.0}
+        
+        # test.send_command(init_pos, duration=0.2)
+        # while not rospy.is_shutdown():
+        #     x = random.uniform(0.6, 0.965)
+        #     y = random.uniform(-1*sqrt(abs(0.75**2 - x**2 )), sqrt(abs(0.75**2 - x**2 )))
+        #     test.move_model(model_name="cylinder",x=x,y=y,z=1)
+        #     rospy.sleep(1)
+
+        # test.spawn_object(new_model_name="cylinder_1",x=0.8,y=0,z=1.2)
+        # test.move_model(model_name="cylinder",x=0.6,y=0.0,z=1)
+        # bridge = CvBridge()
+        # is_in_collision = test.check_two_objects_collision(object_1_name="cylinder",object_2_name="cylinder_1")
+
+        # print(is_in_collision)
+        # height: 480
+        # width: 640
+
+        # image_1 = rospy.wait_for_message("/camera/depth/image_rect_raw", Image,timeout=10.0)
+        # image_2 = rospy.wait_for_message("/camera/color/image_raw", Image,timeout=10.0)
+        # color_image = bridge.imgmsg_to_cv2(image_2,desired_encoding='rgb8')
+        # camera_depth_image_raw = bridge.imgmsg_to_cv2(image_1,desired_encoding='passthrough')
+        # image = [image_1.data]
+
+        # a = np.dstack((color_image,camera_depth_image_raw))
+        # print(a.shape)
+
+        # pose_goal = Pose()
+        # pose_goal.orientation.x = 0.00000
+        # pose_goal.orientation.z = 0.00000
+        # pose_goal.orientation.y = 0.7071068
+        # pose_goal.orientation.w = 0.7071068
+        # pose_goal.position.x = 0.58
+        # pose_goal.position.y = 0.000000
+        # pose_goal.position.z = 0.3
+        # #24
+        # flag = test.move_tip_absolute(pose_goal)
+        # rospy.sleep(0.1)
+
+        # is_closed=test.close_gripper()
+        # rospy.sleep(0.1)
+
+        
+        # is_collided=test.check_fingers_collision("cylinder")
+        # print(is_collided)
+
+
+       
+        
+              
+   
+        # # test.send_command(test.init_pos, duration=0.2)
+        
+        # tf_buffer = tf2_ros.Buffer()
+        # listener = tf2_ros.TransformListener(tf_buffer)
+        # # init_pos = {'shoulder_pan_joint':-1.57, 'shoulder_lift_joint':-1.5,'elbow_joint':-1.57,
+        # # 		 'wrist_1_joint':0.0, 'wrist_2_joint':0.0,'wrist_3_joint':0.0}
+        
+        # # test.send_command(init_pos, duration=0.2)
+        # object = test.get_object_pose()
+        # object = np.array((object.position.x, object.position.y, object.position.z))
+        # is_tf = tf_buffer.can_transform("world","right_finger_v1_1",rospy.Time(),timeout=rospy.Duration(5.0))
+        # if is_tf :
+        #     print("tf its ok ")
+        #     trans = tf_buffer.lookup_transform("world","right_finger_v1_1", rospy.Time())
+        #     tip_pose = Pose()
+        #     tip_pose.position.x = trans.transform.translation.x
+        #     tip_pose.position.y = trans.transform.translation.y
+        #     tip_pose.position.z = trans.transform.translation.z  
+        #     tip  = np.array((tip_pose.position.x, tip_pose.position.y, tip_pose.position.z))
+        # else:
+        #     tip = test.get_tip_pose()
+        #     tip = np.array(tip.position.x,tip.position.y,tip.position.z)
+
+        # distance = np.linalg.norm(tip - object)
+        # print("priting tip pose")
+        # print(tip)
+        # print("priting oject pose")
+        # print(object)
+        # print("priting init distance")
+        # print(distance)
+        
+        # pose_goal = Pose()
+        # pose_goal.orientation.x = 0
+        # pose_goal.orientation.w = 1
+        # pose_goal.position.x = 0.89
+        # pose_goal.position.y = 0.0
+        # pose_goal.position.z = 0.95
+        # flag = test.move_tip_absolute(pose_goal)
+        # trans = tf_buffer.lookup_transform("world","right_finger_v1_1", rospy.Time())
+        # tip_pose = Pose()
+        # tip_pose.position.x = trans.transform.translation.x
+        # tip_pose.position.y = trans.transform.translation.y
+        # tip_pose.position.z = trans.transform.translation.z      
+        # tip  = np.array((tip_pose.position.x, tip_pose.position.y, tip_pose.position.z))
+        # distance = np.linalg.norm(tip - object)
+        # print("priting tip pose")
+        # print(tip)
+        # print("priting oject pose")
+        # print(object)
+        # print("priting last distance")
+        # print(distance)
+       
+
+
+        # tip = test.get_tip_pose()
+        # tip  = np.array((tip.position.x, tip.position.y, tip.position.z))
+        # distance = np.linalg.norm(tip - object)
+        # print("printing position of tip")
+        # print(distance)
+
+        # print("have moved to pose goal")
+
+
+        # while not rospy.is_shutdown():
+        #   try:
+        #        trans = tf_buffer.lookup_transform("world","right_finger_v1_1", rospy.Time(0))
+        #        tip_pose = Pose()
+        #        tip_pose.position.x = trans.transform.translation.x
+        #        tip_pose.position.y = trans.transform.translation.y
+        #        tip_pose.position.z = trans.transform.translation.z
+        #        print(tip_pose)
+        #   except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+        #       continue
+
+
+        # print(test.get_object_pose())             
+        
+        # # print(test.get_tip_pose())
+        # # pose_goal = geometry_msgs.msg.Pose()
+        # # pose_goal.orientation.w = 1.0
+        # # pose_goal.position.x = 0.9
+        # # pose_goal.position.y = 0.0
+        # # pose_goal.position.z = 0.95
+        # # flag = test.move_tip_absolute(pose_goal)
+        # # print(flag)
+        # print("spawning")
+        # test.spawn_object("kinect")
+        # print("spawned?")
+        # test.spawn_object("beer")
+
+               
+
+
+
+        
+
+        # rospy.sleep(0.5)
+        # 
+        # rospy.sleep(0.5)
+        # test.reset_world()
+        # rospy.sleep(0.5) #no funciona muy bien
+        # test.reset_world()
+        # command = {'shoulder_pan_joint':0.0, 'shoulder_lift_joint':-2.33,'elbow_joint':1.57,
+        # 		 'wrist_1_joint':0.0, 'wrist_2_joint':0.0,'wrist_3_joint':0.0}
+        # test.send_command(command=command)
+        # print(test.get_current_joint_state())
+        # test.open_gripper()
+        # test.pick()
+         
+    except rospy.ROSInterruptException:
+        rospy.logerr("Something went wrong or you pressed CTRL +C ...")
+
+if __name__ == "__main__":
+    init_node()

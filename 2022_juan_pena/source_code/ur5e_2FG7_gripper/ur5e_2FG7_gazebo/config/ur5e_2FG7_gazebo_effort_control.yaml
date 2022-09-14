@@ -1,0 +1,35 @@
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 50
+
+arm_controller:
+  type: position_controllers/JointPositionController
+  joint: shoulder_pan_joint
+
+
+
+# arm_controller:
+#   type: position_controllers/JointPositionController
+#   joints:
+#     - shoulder_pan_joint
+#     - shoulder_lift_joint
+#     - elbow_joint
+#     - wrist_1_joint
+#     - wrist_2_joint
+#     - wrist_3_joint
+
+# arm_controller:
+#   type: position_controllers/JointPositionController JointTrajectoryController
+#   joints:
+#     - shoulder_pan_joint
+#     - shoulder_lift_joint
+#     - elbow_joint
+#     - wrist_1_joint
+#     - wrist_2_joint
+#     - wrist_3_joint
+#   pid: {p: 100.0, i: 0.01, d: 10.0}
+
+gripper_controller:
+  type: effort_controllers/JointEffortController
+  joint: left_finger_joint 
+  pid: {p: 100.0, i: 0.01, d: 10.0}
