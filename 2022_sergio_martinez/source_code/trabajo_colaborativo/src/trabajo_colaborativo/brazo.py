@@ -9,6 +9,7 @@ class Brazo:
         self.cilindro_sub = rospy.Subscriber("/cilindro", Cilindro, self.callback_cilindro)
 
     def callback_cilindro(self,data):
+        #Callback de los mensajes que se publican en /cilidro
         if data.name == self.brazo_name:
             print(data.name + " procede a recoger nuevo cilindro")
 

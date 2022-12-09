@@ -19,9 +19,10 @@ from math import pi, floor
 
 class Robobo:
     def __init__(self,base):
+        #Parámetros del robot
         self.espera = True
         self.base = base
-        #Servicios y topics
+        #Llamada de servicios y suscripción y publicación de topics
         self.moveWheels = rospy.ServiceProxy(self.base + "/moveWheels", MoveWheels)
         self.resetWheels = rospy.ServiceProxy(self.base + "/resetWheels", ResetWheels)
         self.movePanTilt = rospy.ServiceProxy(self.base + "/movePanTilt", MovePanTilt)
@@ -57,7 +58,7 @@ class Robobo:
         self.maxblob = 50
         self.minblob = 30
         self.distBlob = 8000
-        self.QRaparcamiento = "comodin2"
+        self.QRaparcamiento = base
         self.distAparcar = 1000
         self.centroAparcar = 400
         #Variables booleanas
@@ -105,14 +106,17 @@ class Robobo:
         self.color.custom = custom
         
     def mensaje_cilindro(self, cilindro):
+        #Definición del mensaje que se publica en /cilindro
         self.cilindro_msg.name = self.base
         self.cilindro_msg.cilindro = cilindro
 
     def mensaje_aparcado(self):
+        #Definición del mensaje que se publica en /aparcado
         self.aparcado_msg.name = self.base
         self.aparcado_msg.aparcado = True
 
     def callback_espera(self,data):
+        #Callback del topic /espera
         if data.name == self.base:
             print(self.base + " Comienza ciclo de trabajo")
             self.espera = data.espera
@@ -138,6 +142,7 @@ class Robobo:
                     self.mensaje_bateria = True
 
     def callback_wheels(self,data):
+        #Callback de los encoders de las ruedas
         if not self.espera: 
             izq = abs(data.wheelPosL.data)
             der = abs(data.wheelPosR.data)
@@ -150,6 +155,7 @@ class Robobo:
                     self.avanzar = False
 
     def callback_or(self,data):
+        #Callback del giroscopio
         if not self.espera: 
             yaw = floor(data.yaw.data)
             if self.izquierda:
@@ -166,6 +172,7 @@ class Robobo:
                     self.derecha = False
 
     def callback_QR(self,data):
+        #Callback de la detección de códigos QR
         if self.QR and not self.espera:
             self.QRdetectado = True
             distancia = data.distance
@@ -187,6 +194,7 @@ class Robobo:
                     self.mover_ruedas(1,1,1)
 
     def callback_blob(self,data):
+        #Callback de la detección de color
         if self.recoge_cilindro and not self.espera:
             self.blob_detectado = True
             centro = data.center.x
@@ -195,6 +203,7 @@ class Robobo:
             self.recogida_blob(centro,distancia)
 
     def callback_IRs(self,data):
+        #Callback de los infrarrojos
         if self.irs_cilindro and not self.espera:
             print(data.FrontC.range)
             if data.FrontC.range > 1500:
@@ -224,6 +233,7 @@ class Robobo:
                         self.mover_ruedas(self.speed,self.speed,1)
 
     def centrado_blob(self,centro):
+        #Parte del centrado con respecto al color del recogida_blob
         if centro > self.maxblob:
                 self.mover_ruedas(0,self.speed,1)
         elif centro < self.minblob:
@@ -253,6 +263,7 @@ class Robobo:
                 self.QRlisto = True
 
     def aparcar_QR(self,centro,distancia):
+        #Función que controla el aparcamiento del robot al quedarse sin batería
         if not self.posicionado:
             if centro > self.centroAparcar:
                 print("centrando...")
@@ -270,6 +281,7 @@ class Robobo:
                 self.aparcado = True
 
     def avanzar_distancia(self, distancia):
+        #Función para avanzar una distancia determinada con los encoders de las ruedas
         self.reset_ruedas()
         self.grados_avanzar = round(360/self.perimetro * distancia)
         self.avanzar = True
@@ -281,24 +293,28 @@ class Robobo:
         self.wait(1)
 
     def girar_derecha(self,orientacion):
+        #Función para girar a la derecha a una determinada orientación
         self.giro = orientacion
         self.derecha = True
         while self.derecha:
             self.wait(self.tiempo_wait)
 
     def girar_izquierda(self,orientacion):
+        #Función para girar a la izquierda a una determinada orientación
         self.giro = orientacion
         self.izquierda = True
         while self.izquierda:
             self.wait(self.tiempo_wait)
 
     def salida_aparcamiento(self):
+        #Acción de salir de la Zona de recarga
         self.speed = -self.speed
         self.avanzar_distancia(45)
         self.speed = - self.speed
         self.girar_izquierda(self.or_der)
 
     def avanzar_QR(self):
+        #Acciones para el avance y centrado con el QR
         self.QR = True 
         while not self.QRdetectado:
             self.mover_ruedas(self.speed,self.speed,1)
@@ -343,7 +359,8 @@ class Robobo:
                 self.girar_izquierda(self.or_der)
                 self.mover_pantilt(270,15,0,0)
                 self.sustitucion = True
-            
+
+        #Cuarto y quinto caso: Girar a la izquierda
         if self.QRname == "velocidad 50":
             self.girar_izquierda(self.or_izq)
 
@@ -351,6 +368,7 @@ class Robobo:
             self.girar_izquierda(self.or_arriba)
 
     def recoger_cilindro(self):
+        #Acciones para recoger el cilindro en la Zona de recogida
         print("Buscar color")
         self.mover_pantilt(0,0,self.tilt_blob,15)
         self.recoge_cilindro = True
@@ -363,6 +381,7 @@ class Robobo:
         self.mover_pantilt(0,0,self.tilt_QR,15)
 
     def aparcar(self):
+        #Acciones para aparcar el robot cuando se queda sin batería. Se complementa con aparcar_QR
         self.QR = True
         while not self.plaza_localizada:
             self.mover_ruedas(self.speed,self.speed,1)
@@ -388,6 +407,7 @@ class Robobo:
         self.QRlisto = False
 
     def reinicio_variables_cilindro(self):
+        #Reincio de las variables de la recogida del cilindro
         self.blob_detectado = False
         self.blob_primer_centrado = False
         self.blob_segundo_centrado = False
@@ -395,6 +415,7 @@ class Robobo:
         self.cilindro_listo = False
         
     def reinicio_variables_aparcar(self):
+        #Reinicio de las variables del estacionamiento
         self.QRdetectado = False
         self.plaza_localizada = False
         self.sustitucion = False
@@ -403,15 +424,18 @@ class Robobo:
         
 
     def run(self):
+        #Ejecución principal
         while True:
+            #Espera
             while self.espera:
                 self.wait(self.tiempo_wait)
-
+            #Pasos inciciales
             self.set_color(False,True,False,False)
             self.set_blob.publish(self.color)
             self.mover_pantilt(0,0,self.tilt_QR,15)
             self.salida_aparcamiento()
             while not self.sustitucion:
+                #Ciclo de trabajo
                 self.avanzar_QR()
                 self.accion_QR()
                 self.reinicio_variables_QR()
@@ -419,7 +443,7 @@ class Robobo:
                     self.recoger_cilindro()
                     self.mensaje_cilindro(False)
                     self.cilindro_pub.publish(self.cilindro_msg)
-
+            #Aparcamiento
             self.aparcar()
             self.reinicio_variables_aparcar()
             self.mensaje_aparcado()

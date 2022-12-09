@@ -12,20 +12,23 @@ class Administrador:
         self.cinta = "cinta"
         self.cilindro_sub = rospy.Subscriber("/cilindro", Cilindro, self.callback_cilindro)
         self.aparcado_sub = rospy.Subscriber("/aparcado", Aparcado, self.callback_aparcado)
-        self.cilindro_pub = rospy.Publisher("/cilindro", Cilindro, latch=True,queue_size=1)
+        self.cilindro_pub = rospy.Publisher("/cilindro", Cilindro, latch=True, queue_size=1)
         self.cilindro_msg = Cilindro()
         self.espera_pub = rospy.Publisher("/espera", Espera, latch=True, queue_size=1)
         self.espera_msg = Espera()
     
     def mensaje_cilindro(self, name, cilindro):
+        #Definición del mensaje que se publica en /cilindro
         self.cilindro_msg.name = name
         self.cilindro_msg.cilindro = cilindro
 
     def mensaje_espera(self, name, espera):
+        #Definición del mensaje que se publica en /espera
         self.espera_msg.name = name
         self.espera_msg.espera = espera
 
     def callback_aparcado(self,data):
+        #Callback de /aparcado. Dependiendo del robot que indique que se aparcó, se ordena al otro iniciar el ciclo de trabajo
         if data.name == self.robobo1:
             if data.aparcado:
                 print(data.name + " Aparcado")
@@ -39,6 +42,7 @@ class Administrador:
                 self.espera_pub.publish(self.espera_msg)
 
     def callback_cilindro(self,data):
+        #Callback de /cilindro. Se ordena la recogida de un cilindro por un brazo o el movimiento de la cinta transportadora
         if data.name == self.robobo1 or data.name == self.robobo2:
             if data.cilindro:
                 print(data.name + " Ha dejado un cilindro en la cinta")

@@ -11,10 +11,12 @@ class Cinta:
         self.cilindro_msg = Cilindro()
 
     def mensaje_cilindro(self):
+        #Definición del mensaje que se publica en /cilindro
         self.cilindro_msg.name = self.cinta
         self.cilindro_msg.cilindro = True
     
     def callback_cilindro(self,data):
+        #Callback de los mensajes que se publican en /cilindro
         if data.name == self.cinta:
             if data.cilindro:
                 rospy.sleep(5)
