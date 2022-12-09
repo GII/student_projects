@@ -41,7 +41,7 @@ class PickUpObject:
         # self.move_group.execute(plan, wait=True)
         # Calling stop() ensures that there is no residual movement
         self.move_group.stop()
-        # It is always good to clear your targets after planning with poses.
+        # Clearing targets after planning
         self.move_group.clear_pose_targets()
 
     def close_gripper(self):

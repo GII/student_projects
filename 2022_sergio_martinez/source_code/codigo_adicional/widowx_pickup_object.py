@@ -5,6 +5,9 @@ import moveit_commander
 
 
 class PickUpObject:
+    """
+
+    """
     def __init__(self, pos_pickup_object, pos_leave_object):
         moveit_commander.roscpp_initialize(sys.argv)
 
@@ -26,41 +29,42 @@ class PickUpObject:
 
 
     def get_planning_info(self):
-        # We can get the name of the reference frame for this robot:
+        # Getting the name of the reference frame for this robot:
         planning_frame = self.move_group.get_planning_frame()
         print ("============ Planning frame: %s" % planning_frame)
 
-        # We can also print the name of the end-effector link for this group:
+        # Getting the end-effector link for this group:
         eef_link = self.move_group.get_end_effector_link()
         print ("============ End effector link: %s" % eef_link)
 
-        # We can get a list of all the groups in the robot:
+        # Getting a list of all the groups in the robot:
         group_names = self.robot.get_group_names()
         print ("============ Available Planning Groups:" + str(self.robot.get_group_names()))
 
-        # Sometimes for debugging it is useful to print the entire state of the
-        # robot:
+        # Printing the entire state of the robot:
         print("============ Printing robot state")
         print(self.robot.get_current_state())
         print()
 
+        # Printing the current pose:
         current_pose = self.move_group.get_current_pose()
         print("Current pose")
         print("===========")
         print(current_pose)
 
+        # Printing the goal tolerance:
         print("Goal tolerance")
         print("==============")
         print(self.move_group.get_goal_tolerance())
 
 
     def go_to_pose(self, pose):
-        #Planning to pose goal
+        # Planning to pose goal
         self.move_group.set_pose_target(pose)
         plan = self.move_group.go(wait=True)
-        #Calling stop() ensures that there is no residual movement
+        # Calling stop() ensures that there is no residual movement
         self.move_group.stop()
-        # It is always good to clear your targets after planning with poses.
+        # Clearing targets after planning.
         self.move_group.clear_pose_targets()
 
 
