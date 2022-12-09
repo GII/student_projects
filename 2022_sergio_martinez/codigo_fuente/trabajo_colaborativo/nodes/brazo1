@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+from trabajo_colaborativo.brazo import Brazo
+import rospy
+
+
+def inicia_nodo():
+    try:
+        rospy.init_node('brazo1')
+        moverse = Brazo("brazo1")
+        moverse.run()
+    except rospy.ROSInterruptException:
+        rospy.logerr("Error inicializando el nodo o llamando al servicio")
+
+
+
+if __name__ == "__main__":
+    inicia_nodo()
