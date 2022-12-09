@@ -1,0 +1,8 @@
+<launch>
+     <node name="admin" pkg="trabajo_colaborativo" type="admin" output="screen"/>
+     <node name="robobo1" pkg="trabajo_colaborativo" type="robobo1" output="screen"/>
+     <node name="robobo2" pkg="trabajo_colaborativo" type="robobo2" output="screen"/>
+     <node name="brazo1" pkg="trabajo_colaborativo" type="brazo1" output="screen"/>
+     <node name="brazo2" pkg="trabajo_colaborativo" type="brazo2" output="screen"/>
+     <node name="cinta" pkg="trabajo_colaborativo" type="cinta" output="screen"/>
+</launch>
