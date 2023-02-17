@@ -1,0 +1,25 @@
+# importation of the needed libraries
+
+import os
+import glob as glob
+import matplotlib.pyplot as plt
+import cv2
+import requests
+import random
+import numpy as np
+import subprocess
+
+# Information from the user
+
+SEED = {/number_seed/}
+EPOCHS = {/epoch_number/}
+RES_DIR = "{/resul_dir/}"
+DATA_DIR = "{/data_dir/}"
+TRAIN_DATA = DATA_DIR + "\\train"
+TEST_DATA = DATA_DIR + "\\test"
+VAL = DATA_DIR + "\\valid"
+INFERENCE = "{/infer_dir/}"
+TRAIN = True
+
+np.random.seed(SEED)
+

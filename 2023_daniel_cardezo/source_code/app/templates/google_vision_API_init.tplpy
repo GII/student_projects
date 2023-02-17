@@ -1,0 +1,20 @@
+# Import libraries
+from cProfile import label
+import os
+
+import cv2
+import time
+import sys
+from skimage.io import imsave
+from google.cloud import vision
+import datetime
+from email.mime import image
+import io
+
+""" Hyperparameters and Constants
+
+Here, we define wether to train the model or not and for how many epochs to train for.
+
+"""
+
+# nothing to do here, parameters defined locally

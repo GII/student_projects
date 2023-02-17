@@ -1,0 +1,13 @@
+""" 
+    Main function, selects the peripheral to use for image capture.
+    Calls the capture function and then the processing of the captured images starts.
+    
+"""
+
+
+if __name__ == "__main__":
+    camera_device = 0
+    if len(sys.argv) > 1:
+        camera_device = int(sys.argv[1])
+
+    webcam_capture_test(camera_device)

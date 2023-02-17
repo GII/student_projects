@@ -1,0 +1,52 @@
+"""
+    The frames obtained from the camera, needs to be processed.
+    In the function below, also the targets to detect in the process are defined,
+    It is important to mention that the OpenCV images are in BGR format, so in this
+    function it is important to convert the images to RGB format.
+"""
+
+
+def frame_processing(content):
+
+    targets = [OBJECT_1, OBJECT_2, "Vehicle"]
+
+    labels = detect_labels(content)
+    process_labels(labels, frame=content, targets=targets)
+
+""" 
+    The next step (subfunction in the frame treatment above) is to detect the labels 
+    in the treated frames. For this step, we call the Google Cloud Vision API.
+"""
+
+
+def detect_labels(content):
+    """Set google credentials"""
+    credential = r"C:\prueba_python\buoyant-road-375718-d3c4bf268d24.json"
+
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credential
+    """Detects labels in the file."""
+    from google.cloud import vision
+    import io
+
+    client = vision.ImageAnnotatorClient()
+
+    # with io.open(path, 'rb') as image_file:
+    #     content = image_file.read()
+
+    image = vision.Image(content=content)
+
+    response = client.object_localization(image=image)
+    labels = response.localized_object_annotations
+
+    print("Labels:")
+    # loop in order to print all the labels detected in the terminal
+    for label in labels:
+        print(label)
+    # if there´s any problem to be reported
+    if response.error.message:
+        raise Exception(
+            "{}\nFor more info on error messages, check: "
+            "https://cloud.google.com/apis/design/errors".format(response.error.message)
+        )
+
+    return labels

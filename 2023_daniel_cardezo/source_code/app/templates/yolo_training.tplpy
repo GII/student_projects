@@ -1,0 +1,15 @@
+glob.glob("train/images/*")
+
+glob.glob("train/labels/*")
+
+process = subprocess.call(
+    [
+        "python yolov5\\train.py",
+        f"--data {TRAIN_DATA}",
+        "--weights yolov5s.pt",
+        "--img 640",
+        "--epochs 25",
+        "--batch-size 16",
+    ],
+    shell=True,
+)

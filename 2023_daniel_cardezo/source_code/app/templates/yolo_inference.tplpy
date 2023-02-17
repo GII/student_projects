@@ -1,0 +1,26 @@
+"""### Inference
+In this section, we will carry out inference on unseen images from the inference path. 
+
+"""### Inference on Images
+
+# Helper function for inference on images.
+def inference(INFERENCE):
+    # Inference on images.
+    process_infer = subprocess.call(
+    [
+        "python yolov5\\detect.py",
+        f"--data {INFERENCE}",
+        "--weights yolov5s.pt",
+        "--img 640",
+        "--epochs EPOCHS",
+        "--batch-size 16",
+    ],
+    shell=True,
+)
+    return INFERENCE
+
+# Inference on images.
+IMAGE_INFER_DIR = inference(INFERENCE)
+
+
+	

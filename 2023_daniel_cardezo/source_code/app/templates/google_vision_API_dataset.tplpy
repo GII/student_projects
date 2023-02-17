@@ -1,0 +1,28 @@
+""" 
+    Here, in this project, the images used are taken directly from the laptop camera,
+    so we do not need to select a folder to get the images from.
+
+    nevertheless, we need to open the laptop camera and take frames from it. 
+"""
+
+OBJECT_1 = "{/object_1/}"
+OBJECT_2 = "{/object_2/}"
+RES_DIR = "{/resul_dir/}"
+DATA_DIR = "{/data_dir/}"
+
+# function in order to capture webcam images to lately be processed
+def webcam_capture_test(camera_device):
+
+    os.chdir(RES_DIR)
+    for frame in os.listdir(DATA_DIR):
+        local = DATA_DIR + "\\" + frame
+        with io.open(local, "rb") as image_file:
+            content = image_file.read()
+        frame_processing(content)
+
+        # 2000 ms delay --> wait for 2 seconds
+        key = cv2.waitKey(2000) & 0xFF
+        # If the key "q" is pressed, the loop
+        # stops before the defined diration time
+        if key > 0 and chr(key) == "q":
+            break
